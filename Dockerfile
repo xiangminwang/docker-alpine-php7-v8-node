@@ -1,31 +1,32 @@
-FROM alpine:3.3
+# Chose frolvlad/alpine-glibc for taking GNU C library back
+FROM frolvlad/alpine-glibc
 MAINTAINER xiangminwang <wang@xiangmin.net>
+
+COPY /conf /opt/docker/
 
 RUN set -x \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
-    # Add testing
+    # Fix "world" issue
     && echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
     # Install some basic staff 
-    && apk add --update bash git wget curl shadow ca-certificates \
+    && apk add --update bash git tar wget openssl python ruby ruby-irb ca-certificates curl ncurses \
+    # Install heavy staff
+    && apk add --update \
+        v8 \
+        nodejs \
+        imagemagick \
     # Install linuxbrew
-    && git clone https://github.com/Linuxbrew/linuxbrew.git ~/.linuxbrew \
-    && echo "export PATH=$HOME/.linuxbrew/bin:$PATH" >> /root/.bashrc \
-    && echo "export MANPATH=$HOME/.linuxbrew/share/man:$MANPATH" >> /root/.bashrc \
-    && echo "export INFOPATH=$HOME/.linuxbrew/share/info:$INFOPATH" >> /root/.bashrc \
+    && git clone https://github.com/Linuxbrew/linuxbrew.git /root/.linuxbrew \
+    && source /opt/docker/brew.rc \
     # Install dependencies
     && brew install \
-        v8 \
-        node \
-        imagemagick \
         homebrew/php/php70 \
         homebrew/php/php70-mcrypt \
         homebrew/php/php70-imagick \
         homebrew/php/php70-pdo-dblib \
         homebrew/php/php70-pdo-pgsql \
-        homebrew/php/php70-memcached \
         homebrew/php/php70-mongodb \
-        homebrew/php/php70-redis \
         homebrew/php/php70-uuid \
         homebrew/php/php70-snmp \
         homebrew/php/php70-v8js \
