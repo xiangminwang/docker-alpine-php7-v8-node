@@ -1,3 +1,7 @@
-# docker-alpine-php7-v8-node
+# docker-php7-v8-node
 
-This is a image contained `php7` `v8 + v8js` `nodejs + gulp`.
+This image contains:
+- php7
+- linuxbrew
+- v8 + v8js
+- nodejs + gulp
