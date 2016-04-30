@@ -1,11 +1,10 @@
-FROM webdevops/base-app:ubuntu-16.04
+FROM webdevops/base-app:ubuntu-14.04
 MAINTAINER xiangminwang <wang@xiangmin.net>
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
-COPY conf/ /opt/docker/
 ADD sources.list /etc/apt/sources.list
 
 RUN sudo apt-get update \
@@ -38,6 +37,13 @@ RUN brew install \
     composer \
     nodejs \
     # Install gulp
-    && npm install --global gulp \
-    && /opt/docker/bin/provision run --tag bootstrap \
-    && /opt/docker/bin/bootstrap.sh
+    && npm install --global gulp
+
+USER root
+COPY conf/ /opt/docker/
+RUN bash /opt/docker/bin/control.sh provision.role.bootstrap homebrew-php \
+    && bash /opt/docker/bin/bootstrap.sh
+
+EXPOSE 9000
+
+CMD ["supervisord"]
